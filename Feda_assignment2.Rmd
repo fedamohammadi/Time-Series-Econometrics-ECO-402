@@ -1,0 +1,31 @@
+# In class activity #2. 
+
+# Figure 1.3 
+
+setwd("C:/Users/mohammadif/Documents/Time Series Econometrics/Data")
+read.table("C:/Users/mohammadif/Documents/Time Series Econometrics/Data")
+
+
+
+Maine.month <- read.table(www, header = TRUE)
+
+attach(Maine.month)
+class(Maine.month)
+
+Maine.month.ts <- ts(unemploy, start = c(1996, 1), freq = 12)
+
+Maine.annual.ts <- aggregate(Maine.month.ts)/12
+
+
+layout(1:2)
+plot(Maine.month.ts, ylab = "unemployed (%)")
+plot(Maine.annual.ts, ylab = "unemployed (%)")
+
+
+
+
+
+ 
+ 
+ 
+ 
