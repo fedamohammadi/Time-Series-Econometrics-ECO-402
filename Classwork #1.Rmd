@@ -2,6 +2,7 @@
 title: "In class assignment 1"
 author: "Dr. Nabila"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
+student: "Feda Mohammadi"
 output:
   html_document:
     toc: true

@@ -6,7 +6,6 @@ setwd("C:/Users/mohammadif/Documents/Time Series Econometrics/Data")
 read.table("C:/Users/mohammadif/Documents/Time Series Econometrics/Data")
 
 
-
 Maine.month <- read.table(www, header = TRUE)
 
 attach(Maine.month)
@@ -23,7 +22,7 @@ plot(Maine.annual.ts, ylab = "unemployed (%)")
 
 
 
-
+# this project will be completed in the class only.  
 
  
  
