@@ -119,7 +119,7 @@ abline(h = mean(nile), lty = 2)
 
 
 - Why might long-run averages shift in environmental data?
-** It can be due to climate change or climate pattern of a specific region. 
+** It can be due to climate change or climate pattern of a specific region or the place the data is coming from. 
 
 ---
 
