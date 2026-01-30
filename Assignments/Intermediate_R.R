@@ -166,7 +166,15 @@ dyn_model <- lm(u ~ u_lag1 + u_lag2, data = as.data.frame(lag_df))
 summary(dyn_model)
 
 # -------------------------------
-# 16. Saving Results
+# 16) Compare level vs difference stationarity visually
+# -------------------------------
+par(mfrow = c(1, 2))
+plot(u, main = "Level Series")
+plot(diff(u), main = "First Difference")
+par(mfrow = c(1, 1))
+
+# -------------------------------
+# 17. Saving Results
 # -------------------------------
 
 save(u, auto_model, fc, file = "your file name")
