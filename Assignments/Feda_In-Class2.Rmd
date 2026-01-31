@@ -4,7 +4,8 @@
 
 setwd("C:/Users/mohammadif/Documents/Time Series Econometrics")
 
-# getwd() -> (this verifies if you're in the right directory.)
+# This verifies if you're in the right directory.
+getwd()
 
 Maine.month <- read.table("Data/Maine.dat", header = TRUE)
 
