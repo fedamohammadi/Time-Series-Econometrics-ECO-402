@@ -1,0 +1,273 @@
+---
+title: "In class assignment 1"
+author: "Dr. Nabila"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+student: "Feda Mohammadi"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+# Built-in data only (no downloads, no API keys)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+# 0) What is a time series in R?
+
+A **time series** is data recorded over time.  
+In R, a `ts` object stores:
+- the data
+- start/end time
+- frequency (e.g. 12 = monthly)
+
+```{r}
+ap <- AirPassengers
+class(ap)
+frequency(ap)
+start(ap); end(ap)
+```
+
+---
+
+# 1) AirPassengers
+
+```{r}
+plot(ap,
+     main = "AirPassengers: Trend + Seasonality",
+     ylab = "Passengers (thousands)",
+     xlab = "Year")
+```
+
+### 🟦 PAUSE & DISCUSS (2–3 minutes)
+- Do you see an **overall direction**?  
+** We see an upward trend. 
+
+- Do you see a **repeating pattern**?  
+** Yes we do see a seasonal pattern.
+
+
+- Why might airline travel repeat every year?
+** Because towards the summer, there tends to be a lot of tourists traveling, while colder seasons people travel less. 
+
+---
+
+## 1A) Seasonality made obvious
+
+```{r}
+monthplot(ap,
+          main = "AirPassengers: Month Plot (Seasonality)",
+          ylab = "Passengers (thousands)")
+```
+
+### 🟦 PAUSE & DISCUSS
+- Which months are consistently high? Low?
+** First the Jan, Feb, and Mar, and also Oct, Nov, and Dec are low. At the same time, 
+from April, it gets higher until September. 
+
+
+- What real-world behavior could explain this?
+** It could be the behavior of tourists becuase it starts getting higher from the begening of summer and is high up until the end fall. 
+
+---
+
+## 1B) Decomposition
+
+```{r}
+ap_decomp <- decompose(ap, type = "multiplicative")
+plot(ap_decomp)
+```
+
+### 🟦 PAUSE & DISCUSS
+- What does the **trend** component capture?
+**  Increase in the number of passengers compared to the previous year. 
+
+
+- What does the **seasonal** component assume?
+** Shows that on particular time of the year, the passenger number peaks, and decreases.
+
+
+- What might the **remainder** represent?
+** It can represents the randomness in the increase/decrease of the passengers that doesn't fit any of the category above. 
+
+
+---
+
+# 2) Trend / Level Shifts (Nile)
+
+```{r}
+nile <- Nile
+plot(nile,
+     main = "Nile River Flow: Trend / Level Shifts",
+     ylab = "Flow",
+     xlab = "Year")
+abline(h = mean(nile), lty = 2)
+```
+
+### 🟦 PAUSE & DISCUSS
+- Does this series look seasonal?
+** It does not look seasonal. 
+
+
+- Do you notice **level changes**?
+** Yes it does change in its level. 
+
+
+- Why might long-run averages shift in environmental data?
+** It can be due to climate change or climate pattern of a specific region or the place the data is coming from. 
+
+---
+
+# 3) Cyclical behavior (UKgas)
+
+```{r}
+ukg <- UKgas
+frequency(ukg)
+
+plot(ukg,
+     main = "UKgas: Cyclical Movements (Quarterly)",
+     ylab = "Gas consumption",
+     xlab = "Year")
+```
+
+### 🟦 PAUSE & DISCUSS
+- Are the ups and downs evenly spaced?
+** Yes, they are evenly spaced by 10 years. 
+
+- How is this different from seasonality?
+** Because the lower and upper parts' symmetry differ from each other so we have two different seasonality. 
+
+- What might link this series to the business cycle?
+** Maybe gas got cheaper. 
+
+
+---
+
+## 3A) Differencing to highlight cycles
+
+```{r}
+ukg_diff <- diff(ukg)
+plot(ukg_diff,
+     main = "UKgas: First Differences",
+     ylab = "Change in consumption",
+     xlab = "Year")
+abline(h = 0, lty = 2)
+```
+
+### 🟦 PAUSE & DISCUSS
+- What did differencing remove?
+- Why do economists often difference data?
+
+---
+
+## 3B) Another cyclical example (monthly deaths)
+
+```{r}
+lde <- ldeaths
+plot(lde,
+     main = "ldeaths: Cyclical / Seasonal Pattern",
+     ylab = "Deaths",
+     xlab = "Year")
+```
+
+### 🟦 PAUSE & DISCUSS
+- Is this pattern purely seasonal?
+- What external factors could drive cycles here?
+
+---
+
+# 4) Heteroscedasticity / Volatility (EuStockMarkets)
+
+```{r}
+esm <- EuStockMarkets
+dax <- esm[, "DAX"]
+
+plot(dax,
+     main = "DAX Index Level",
+     ylab = "Index level",
+     xlab = "Time")
+```
+
+### 🟦 PAUSE & DISCUSS
+- Does variance look constant here?
+- Why might prices hide volatility patterns?
+
+---
+
+## 4A) Returns show changing variance
+
+```{r}
+dax_ret <- diff(log(dax))
+plot(dax_ret,
+     main = "DAX Log Returns: Volatility Clustering",
+     ylab = "Return",
+     xlab = "Time")
+abline(h = 0, lty = 2)
+```
+
+### 🟦 PAUSE & DISCUSS
+- Where do you see calm periods?
+- Where do you see turbulent periods?
+- Why is this a problem for simple OLS models?
+
+
+---
+
+# 5) Cross-section vs Time Series
+
+```{r}
+set.seed(1)
+x <- rnorm(200)
+y <- rnorm(200)
+plot(x, y,
+     main = "Cross-section: Order Does NOT Matter",
+     xlab = "X",
+     ylab = "Y")
+```
+
+---
+
+## 5A) Shuffling destroys time-series meaning
+
+```{r}
+ap_shuffled <- ap
+ap_shuffled[] <- sample(ap)
+
+plot(ap_shuffled,
+     main = "AirPassengers SHUFFLED",
+     ylab = "Passengers",
+     xlab = "Year")
+```
+
+### 🟦 PAUSE & DISCUSS
+- Same numbers, different order — what changed?
+- Why is time ordering information?
+
+---
+
+# 6) Student playground
+
+```{r}
+plot(nottem, main="Monthly temperatures (nottem)")
+plot(co2, main="Atmospheric CO2")
+plot(sunspot.year, main="Sunspots (annual)")
+```
+
+### 🟦 PAUSE & DISCUSS
+- Which series is seasonal?
+- Which is trending?
+- Which might be hardest to forecast?
+
+---
+
+# 7) Big takeaways 
+
+- Time ordering matters  
+- Different series have different structures  
+- Plots come **before** models  
+- The model choice depends on what you *see*
