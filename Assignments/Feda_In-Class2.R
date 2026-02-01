@@ -1,4 +1,11 @@
-# In class activity #2.
+#================================================================
+# I used this package to get the missing data for Elec, Beer, and Chacolate.
+install.packages("tsintermittent")
+library(tsintermittent)
+data(cbe)
+#================================================================
+
+# In class activity number 2.
 setwd("C:/Users/mohammadif/Documents/Time Series Econometrics")
 
 # This verifies if you're in the right directory.
@@ -26,7 +33,6 @@ par(reset = TRUE)
 par(mar = c(5, 4, 4, 2) + 0.1)
 
 
-
 #Figure 1.2
 #----------------------------------------------------------------
 layout(matrix(1:2, nrow = 2))
@@ -34,46 +40,90 @@ layout(matrix(1:2, nrow = 2))
 plot(aggregate(AP))
 boxplot(AP ~ cycle(AP))
 
-
 ## This is trying to create the graph in a saperate window for better visual.
 windows(width = 8, height = 6)
 par(mar = c(3, 3, 2, 1))
 plot(aggregate(AP))
-#-----------------------------------
 
 
-
-
-
-
-
-
-
-# Figure 1.3 
+# Figure 1.3: Unemployment in Maine 
+#----------------------------------------------------------------
 Maine.month <- read.table("Data/Maine.dat", header = TRUE)
-
-# Check data
-str(Maine.month)
-
-# Check data type
+attach(Maine.month)
 class(Maine.month)
 
-# Create monthly time series explicitly
-Maine.month.ts <- ts(Maine.month$unemploy,
-                     start = c(1996, 1),
-                     frequency = 12)
+Maine.month.ts <- ts(unemploy, start = c(1996, 1), freq = 12)
 
-# Aggregate to annual average
-Maine.annual.ts <- aggregate(Maine.month.ts) / 12
+Maine.annual.ts <- aggregate(Maine.month.ts)/12
 
-# Plot
-par(mfrow = c(2, 1), mar = c(4, 4, 2, 1))
+layout(1:2)
+plot(Maine.month.ts, ylab = "unemployed (%)")
+plot(Maine.annual.ts, ylab = "unemployed (%)")
 
-plot(Maine.month.ts, ylab = "Unemployed (%)",
-     main = "Monthly Unemployment in Maine")
+#A time series of February figures
+Maine.Feb <- window(Maine.month.ts, start = c(1996, 2), freq = TRUE)
+Maine.Aug <- window(Maine.month.ts, start = c(1996, 8), freq = TRUE)
+Feb.ratio <- mean(Maine.Feb) / mean(Maine.month.ts)
+Aug.ratio <- mean(Maine.Aug) / mean(Maine.annual.ts)
 
-plot(Maine.annual.ts, ylab = "Unemployed (%)",
-     main = "Annual Unemployment in Maine")
+
+# Figure 1.4: Unemployment 
+#----------------------------------------------------------------
+Maine.month <- read.table("Data/USunemp.dat", header = TRUE)
+US.month <- read.table("Data/USunemp.dat", header = T)
+attach(US.month)
+US.month.ts <- ts(USun, start=c(1996, 1), end=c(2006, 10), freq = 12)
+plot(US.month.ts, ylab = "unemployed (%)")
+
+
+#Figure 1.5: Multiple time series: Electricity, beer and chocolate data
+#----------------------------------------------------------------
+#This dataset does not exist anymore!
+www <- "http://www.massey.ac.nz/~pscowper/ts/cbe.dat"
+CBE <- read.table(www, header = T)
+
+# I used this dataset from an external source linked below.
+www <- "https://raw.githubusercontent.com/prabeshdhakal/Introductory-Time-Series-with-R-Datasets/master/cbe.dat"
+CBE <- read.table(www, header = TRUE)
+head(CBE)
+class(CBE)
+
+Elec.ts <- ts(CBE[, 3], start = 1958, freq = 12)
+Beer.ts <- ts(CBE[, 2], start = 1958, freq = 12)
+Choc.ts <- ts(CBE[, 1], start = 1958, freq = 12)
+plot(cbind(Elec.ts, Beer.ts, Choc.ts))
+
+
+# Figure 1.6: This one does not plot the graph.
+#----------------------------------------------------------------
+AP.elec <- ts.intersect(AP, Elec.ts)
+start(AP.elec)
+end(AP.elec)
+AP.elec[1:3, ]
+
+
+# Figure 1.7: International air passengers and Australian electrictity production (1958-1960)
+#----------------------------------------------------------------
+AP <- AP.elec[,1]; Elec <- AP.elec[,2]
+
+layout(1:2)
+plot(AP, main = "", ylab = "Air passengers / 1000's")
+plot(Elec, main = "", ylab = "Electricity production / MkWh")
+
+
+
+# Figure 1.8: Scatter plot of air passengers and Australian electrictity production (1958-1960) 
+#----------------------------------------------------------------
+
+plot(as.vector(AP), as.vector(Elec),
+       xlab = "Air passengers / 1000's",
+       ylab = "Electricity production / MWh")
+abline(reg = lm(Elec ~ AP))
+cor(AP, Elec)
+
+
+
+
 
 
 
