@@ -1,10 +1,3 @@
-#================================================================
-# I used this package to get the missing data for Elec, Beer, and Chacolate.
-install.packages("tsintermittent")
-library(tsintermittent)
-data(cbe)
-#================================================================
-
 # In class activity number 2.
 setwd("C:/Users/mohammadif/Documents/Time Series Econometrics")
 
@@ -12,7 +5,7 @@ setwd("C:/Users/mohammadif/Documents/Time Series Econometrics")
 getwd()
 
 
-# Figure 1.1
+# Figure 1.1: # This is the plot of the international air passengers in the US from 1949-1960. 
 #----------------------------------------------------------------
 data(AirPassengers)
 AP <- AirPassengers
@@ -23,9 +16,6 @@ summary(AP)
 
 windows(width = 8, height = 6)
 plot(AP, ylab = "Passengers (1000's)")
-
-# This is the plot of the international air passengers in the US from 1949-1960. It also shows
-# a clear insreasing pattern over time.
 
 # This is trying to create the graph in a saperate window for better visual.
 while (!is.null(dev.list())) dev.off()
@@ -61,6 +51,7 @@ plot(Maine.month.ts, ylab = "unemployed (%)")
 plot(Maine.annual.ts, ylab = "unemployed (%)")
 
 #A time series of February figures
+
 Maine.Feb <- window(Maine.month.ts, start = c(1996, 2), freq = TRUE)
 Maine.Aug <- window(Maine.month.ts, start = c(1996, 8), freq = TRUE)
 Feb.ratio <- mean(Maine.Feb) / mean(Maine.month.ts)
@@ -78,15 +69,7 @@ plot(US.month.ts, ylab = "unemployed (%)")
 
 #Figure 1.5: Multiple time series: Electricity, beer and chocolate data
 #----------------------------------------------------------------
-#This dataset does not exist anymore!
-www <- "http://www.massey.ac.nz/~pscowper/ts/cbe.dat"
-CBE <- read.table(www, header = T)
-
-# I used this dataset from an external source linked below.
-www <- "https://raw.githubusercontent.com/prabeshdhakal/Introductory-Time-Series-with-R-Datasets/master/cbe.dat"
-CBE <- read.table(www, header = TRUE)
-head(CBE)
-class(CBE)
+Maine.month <- read.table("Data/cbe.dat", header = TRUE)
 
 Elec.ts <- ts(CBE[, 3], start = 1958, freq = 12)
 Beer.ts <- ts(CBE[, 2], start = 1958, freq = 12)
@@ -111,10 +94,8 @@ plot(AP, main = "", ylab = "Air passengers / 1000's")
 plot(Elec, main = "", ylab = "Electricity production / MkWh")
 
 
-
 # Figure 1.8: Scatter plot of air passengers and Australian electrictity production (1958-1960) 
 #----------------------------------------------------------------
-
 plot(as.vector(AP), as.vector(Elec),
        xlab = "Air passengers / 1000's",
        ylab = "Electricity production / MWh")
@@ -122,13 +103,46 @@ abline(reg = lm(Elec ~ AP))
 cor(AP, Elec)
 
 
+# Figure 1.9: Quarterly exchange rates fro the period 1991-2000  
+#----------------------------------------------------------------
+Maine.month <- read.table("Data/pounds_nz.dat", header = TRUE)
+Z <- read.table(www, header = T)
+
+Z[1:4, ]
+Z.ts <- ts(Z, st = 1991, fr = 4)
+
+plot(Z.ts, xlab = "time / years",
+     ylab = "Quarterly exchange rate in $NZ / pound")
 
 
+# Figure 1.10: Quarterly exchange rates for two periods  
+#----------------------------------------------------------------
+Z.92.96 <- window(Z.ts, start = c(1992, 1), end = c(1996, 1))
+Z.96.98 <- window(Z.ts, start = c(1996, 1), end = c(1998, 1))
+layout (1:2)
+plot(Z.92.96, ylab = "Exchange rate in $NZ/pound",
+       xlab = "Time (years)" )
+plot(Z.96.98, ylab = "Exchange rate in $NZ/pound",
+       xlab = "Time (years)" )
 
 
+# Figure 1.11: Time plots of the global temperature series
+#----------------------------------------------------------------
+Maine.month <- read.table("Data/global.dat", header = TRUE)
+
+Global <- scan("Data/global.dat")
+Global.ts <- ts(Global, st = c(1856, 1), end = c(2005, 12),
+                  fr = 12)
+Global.annual <- aggregate(Global.ts, FUN = mean)
+plot(Global.ts)
+plot(Global.annual)
 
 
-# this project will be completed in the class only.  
+# Figure 1.12: Rising mean global temperatures, January 1970–December 2005
+#----------------------------------------------------------------
+New.series <- window(Global.ts, start=c(1970, 1), end=c(2005, 12))
+New.time <- time(New.series)
+plot(New.series); abline(reg=lm(New.series ~ New.time))
 
 
 
