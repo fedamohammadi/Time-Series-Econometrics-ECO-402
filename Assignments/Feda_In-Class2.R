@@ -60,7 +60,7 @@ Aug.ratio <- mean(Maine.Aug) / mean(Maine.annual.ts)
 
 # Figure 1.4: Unemployment 
 #----------------------------------------------------------------
-Maine.month <- read.table("Data/USunemp.dat", header = TRUE)
+USUnemp <- read.table("Data/USunemp.dat", header = TRUE)
 US.month <- read.table("Data/USunemp.dat", header = T)
 attach(US.month)
 US.month.ts <- ts(USun, start=c(1996, 1), end=c(2006, 10), freq = 12)
@@ -69,7 +69,7 @@ plot(US.month.ts, ylab = "unemployed (%)")
 
 #Figure 1.5: Multiple time series: Electricity, beer and chocolate data
 #----------------------------------------------------------------
-Maine.month <- read.table("Data/cbe.dat", header = TRUE)
+CBE <- read.table("Data/cbe.dat", header = TRUE)
 
 Elec.ts <- ts(CBE[, 3], start = 1958, freq = 12)
 Beer.ts <- ts(CBE[, 2], start = 1958, freq = 12)
@@ -105,7 +105,7 @@ cor(AP, Elec)
 
 # Figure 1.9: Quarterly exchange rates fro the period 1991-2000  
 #----------------------------------------------------------------
-Maine.month <- read.table("Data/pounds_nz.dat", header = TRUE)
+PoundsNZ <- read.table("Data/pounds_nz.dat", header = TRUE)
 Z <- read.table(www, header = T)
 
 Z[1:4, ]
@@ -128,7 +128,7 @@ plot(Z.96.98, ylab = "Exchange rate in $NZ/pound",
 
 # Figure 1.11: Time plots of the global temperature series
 #----------------------------------------------------------------
-Maine.month <- read.table("Data/global.dat", header = TRUE)
+Global <- read.table("Data/global.dat", header = TRUE)
 
 Global <- scan("Data/global.dat")
 Global.ts <- ts(Global, st = c(1856, 1), end = c(2005, 12),
