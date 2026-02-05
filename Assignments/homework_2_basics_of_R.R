@@ -267,7 +267,21 @@ paste("my name is", lower_name)
 #=================================================================
 
 
-
+# --- Install (run once) ---
+pkgs <- c(
+  "forecast",     # ARIMA/ETS/forecasting toolkit
+  "tseries",      # ADF/KPSS/PP tests
+  "urca",         # serious unit root + Johansen cointegration
+  "vars",         # VAR / IRFs / FEVD
+  "tsDyn",        # VECM + nonlinear/threshold models
+  "zoo",          # irregular time series objects
+  "xts",          # time-indexed series (finance-style)
+  "rugarch",      # GARCH volatility models
+  "strucchange",  # structural breaks / breakpoints
+  "ggplot2",      # plotting
+  "tsibble",      # modern tidy time series objects
+  "dplyr"         # data wrangling (often needed with ts data)
+)
 
 
 
