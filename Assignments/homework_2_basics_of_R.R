@@ -284,4 +284,17 @@ pkgs <- c(
 )
 
 
+new_pkgs <- pkgs[!pkgs %in% rownames(installed.packages())]
+if (length(new_pkgs) > 0) install.packages(new_pkgs)
+
+# --- Load (every session) ---
+invisible(lapply(pkgs, library, character.only = TRUE))
+
+# Quick check: list loaded packages
+sessionInfo()
+
+
+
+
+
 
