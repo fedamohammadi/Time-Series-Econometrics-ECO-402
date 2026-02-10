@@ -3,15 +3,11 @@
 # Applied Statistics Handbook
 # =========================================================
 
-# --- 0) Sanity check: does plotting work at all? ---
-# Run this FIRST. If you do not see a plot, the issue is your RStudio plotting device.
 plot(1:10, 1:10, main = "Sanity check: if you see this, plotting works")
 
-# --- 1) Data (built-in, reproducible) ---
 # Old Faithful geyser eruption times (minutes)
 x <- faithful$eruptions
 
-# Optional: quick look at the data
 summary(x)
 
 # =========================================================
