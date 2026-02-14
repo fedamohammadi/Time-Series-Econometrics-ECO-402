@@ -218,3 +218,6 @@ plotly::ggplotly(
     geom_bar() +
     labs(title = "Cases Over Time (Interactive)", x = "Date of onset", y = "Number of cases")
 )
+
+
+
