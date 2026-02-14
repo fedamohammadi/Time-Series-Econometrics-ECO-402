@@ -2,6 +2,8 @@
 # Ebola Analysis: Data Analysis with R
 # Name: Feda Mohammadi
 # Date: February 14, 2026
+# Assignment: Homework 3 
+# Professor: Dr. Nabila Rahman
 # ===========================================================
 
 
