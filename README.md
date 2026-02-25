@@ -1,4 +1,4 @@
-# Time Series Econometrics – ECO 402
+# 📈 Time Series Econometrics – ECO 402
 
 This repository contains my coursework, coding exercises, and structured R lessons for **Time Series Econometrics (ECO 402)**.
 
@@ -9,7 +9,7 @@ This project is developed as part of my undergraduate studies in Quantitative Ec
 ---
 
 
-## Repository Structure
+## 📂 Repository Structure
 
 ```
 Time-Series-Econometrics-ECO-402/
@@ -45,7 +45,7 @@ Time-Series-Econometrics-ECO-402/
 
 ```
 
-# R for Time Series Lessons
+## 💻 R for Time Series Lessons
 
 The `R for Time Series` folder contains a structured and progressive series of R scripts designed to build practical time series econometrics skills.
 
@@ -80,7 +80,7 @@ The structure moves from foundational concepts to advanced econometric modeling.
 
 ---
 
-# Dataset Used in Lessons
+## 🗃️ Dataset Used in Lessons
 
 The R lessons build and reuse a shared monthly macroeconomic dataset constructed from FRED data:
 
@@ -100,7 +100,7 @@ This ensures consistency, reproducibility, and a professional workflow.
 
 ---
 
-# Reproducibility
+## 🔁 Reproducibility
 
 This repository is structured as an RStudio Project.
 
@@ -116,7 +116,7 @@ No hard-coded absolute paths are used.
 
 ---
 
-# Author
+## 👤 Author
 
 **Feda Mohammadi**  
 Berea College  
