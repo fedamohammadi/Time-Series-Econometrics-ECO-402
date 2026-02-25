@@ -4,7 +4,7 @@ This repository contains my coursework, coding exercises, and structured R lesso
 
 The goal of this repository is to build a clean, reproducible, and well-organized workflow for learning and applying time series econometrics using R.
 
-This project is developed as part of my undergraduate studies in Economics at Berea College.
+This project is developed as part of my undergraduate studies in Quantitative Economics at Berea College.
 
 ---
 
@@ -45,7 +45,6 @@ Time-Series-Econometrics-ECO-402/
 ├── Time Series Econometrics.Rproj
 ├── .gitignore
 └── README.md
-
 
 
 ---
@@ -118,19 +117,6 @@ To use this repository:
 Project paths are managed using the `here` package.  
 No hard-coded absolute paths are used.
 
-All lessons are designed to run in sequence, beginning with:
-
-
-
----
-
-# Objectives of This Repository
-
-- Develop rigorous time series intuition  
-- Implement econometric models in R  
-- Connect theory to real macroeconomic data  
-- Maintain clean, structured coding standards  
-- Practice reproducible research workflows  
 
 ---
 
