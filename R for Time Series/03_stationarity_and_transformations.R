@@ -133,3 +133,153 @@ ggsave(
 )
 
 
+# ==========================================================
+# 3) Visual comparison: Industrial Production in different forms
+# ==========================================================
+
+p_indpro_level <- macro_trans %>%
+  filter(!is.na(indpro)) %>%
+  ggplot(aes(x = date, y = indpro)) +
+  geom_line() +
+  labs(
+    title = "Industrial Production in Levels",
+    x = "Date",
+    y = "INDPRO"
+  )
+
+print(p_indpro_level)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "03_indpro_level.png"),
+  plot = p_indpro_level,
+  width = 9,
+  height = 4.5
+)
+
+p_indpro_growth <- macro_trans %>%
+  filter(!is.na(indpro_growth_pct)) %>%
+  ggplot(aes(x = date, y = indpro_growth_pct)) +
+  geom_line() +
+  labs(
+    title = "Industrial Production Growth: 100 × Δlog(INDPRO)",
+    x = "Date",
+    y = "Percent"
+  )
+
+print(p_indpro_growth)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "03_indpro_growth_pct.png"),
+  plot = p_indpro_growth,
+  width = 9,
+  height = 4.5
+)
+
+
+# ==========================================================
+# 4) Rolling mean and variance intuition
+# ==========================================================
+
+# A stationary series should have a roughly stable mean and variance over time.
+# We use simple rolling windows for visual intuition only.
+
+roll_mean_12 <- function(x) {
+  stats::filter(x, rep(1 / 12, 12), sides = 1)
+}
+
+roll_var_12 <- function(x) {
+  n <- length(x)
+  out <- rep(NA, n)
+  for (i in 12:n) {
+    out[i] <- var(x[(i - 11):i], na.rm = TRUE)
+  }
+  out
+}
+
+macro_roll <- macro_trans %>%
+  mutate(
+    roll_mean_cpi = as.numeric(roll_mean_12(cpi)),
+    roll_mean_infl = as.numeric(roll_mean_12(inflation_pct)),
+    roll_var_cpi = roll_var_12(cpi),
+    roll_var_infl = roll_var_12(inflation_pct)
+  )
+
+p_roll_mean_cpi <- macro_roll %>%
+  filter(!is.na(roll_mean_cpi)) %>%
+  ggplot(aes(x = date, y = roll_mean_cpi)) +
+  geom_line() +
+  labs(
+    title = "12-Month Rolling Mean of CPI",
+    x = "Date",
+    y = "Rolling Mean"
+  )
+
+print(p_roll_mean_cpi)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "03_roll_mean_cpi.png"),
+  plot = p_roll_mean_cpi,
+  width = 9,
+  height = 4.5
+)
+
+p_roll_mean_infl <- macro_roll %>%
+  filter(!is.na(roll_mean_infl)) %>%
+  ggplot(aes(x = date, y = roll_mean_infl)) +
+  geom_line() +
+  labs(
+    title = "12-Month Rolling Mean of Inflation",
+    x = "Date",
+    y = "Rolling Mean"
+  )
+
+print(p_roll_mean_infl)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "03_roll_mean_inflation.png"),
+  plot = p_roll_mean_infl,
+  width = 9,
+  height = 4.5
+)
+
+p_roll_var_cpi <- macro_roll %>%
+  filter(!is.na(roll_var_cpi)) %>%
+  ggplot(aes(x = date, y = roll_var_cpi)) +
+  geom_line() +
+  labs(
+    title = "12-Month Rolling Variance of CPI",
+    x = "Date",
+    y = "Rolling Variance"
+  )
+
+print(p_roll_var_cpi)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "03_roll_var_cpi.png"),
+  plot = p_roll_var_cpi,
+  width = 9,
+  height = 4.5
+)
+
+p_roll_var_infl <- macro_roll %>%
+  filter(!is.na(roll_var_infl)) %>%
+  ggplot(aes(x = date, y = roll_var_infl)) +
+  geom_line() +
+  labs(
+    title = "12-Month Rolling Variance of Inflation",
+    x = "Date",
+    y = "Rolling Variance"
+  )
+
+print(p_roll_var_infl)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "03_roll_var_inflation.png"),
+  plot = p_roll_var_infl,
+  width = 9,
+  height = 4.5
+)
+
+
+
+
