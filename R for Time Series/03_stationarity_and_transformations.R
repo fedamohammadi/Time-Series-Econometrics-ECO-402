@@ -336,7 +336,7 @@ summary_table <- macro_trans %>%
 print(summary_table)
 
 # ==========================================================
-# 7) Takeaways
+# 7) Some takeaways
 # ==========================================================
 
 # 1) Series in levels often have trend and changing variance.
@@ -361,6 +361,7 @@ print(summary_table)
 #    - ACF and PACF
 #    - Unit root tests
 #    - ARIMA modeling
+
 
 
 
