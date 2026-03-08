@@ -281,5 +281,93 @@ ggsave(
 )
 
 
+# ==========================================================
+# 5) Compare level vs transformed series side by side
+# ==========================================================
+
+# CPI level vs inflation
+macro_trans %>%
+  filter(!is.na(cpi), !is.na(inflation_pct)) %>%
+  select(date, cpi, inflation_pct) %>%
+  pivot_longer(cols = c(cpi, inflation_pct),
+               names_to = "series",
+               values_to = "value") %>%
+  ggplot(aes(x = date, y = value)) +
+  geom_line() +
+  facet_wrap(~ series, scales = "free_y", ncol = 1) +
+  labs(
+    title = "CPI Level vs Inflation",
+    x = "Date",
+    y = NULL
+  )
+
+# INDPRO level vs growth
+macro_trans %>%
+  filter(!is.na(indpro), !is.na(indpro_growth_pct)) %>%
+  select(date, indpro, indpro_growth_pct) %>%
+  pivot_longer(cols = c(indpro, indpro_growth_pct),
+               names_to = "series",
+               values_to = "value") %>%
+  ggplot(aes(x = date, y = value)) +
+  geom_line() +
+  facet_wrap(~ series, scales = "free_y", ncol = 1) +
+  labs(
+    title = "Industrial Production Level vs Growth",
+    x = "Date",
+    y = NULL
+  )
+
+# ==========================================================
+# 6) Simple numerical summaries
+# ==========================================================
+
+summary_table <- macro_trans %>%
+  summarise(
+    mean_cpi = mean(cpi, na.rm = TRUE),
+    var_cpi = var(cpi, na.rm = TRUE),
+    mean_infl = mean(inflation_pct, na.rm = TRUE),
+    var_infl = var(inflation_pct, na.rm = TRUE),
+    mean_indpro = mean(indpro, na.rm = TRUE),
+    var_indpro = var(indpro, na.rm = TRUE),
+    mean_indpro_growth = mean(indpro_growth_pct, na.rm = TRUE),
+    var_indpro_growth = var(indpro_growth_pct, na.rm = TRUE)
+  )
+
+print(summary_table)
+
+# ==========================================================
+# 7) Takeaways
+# ==========================================================
+
+# 1) Series in levels often have trend and changing variance.
+#    That usually means they are not stationary.
+
+# 2) Taking logs helps stabilize scale, especially when growth is proportional.
+
+# 3) First differences remove trend in many economic time series.
+
+# 4) Log differences are especially useful because:
+#       Δlog(y_t) ≈ growth rate
+#    and 100 × Δlog(y_t) is approximately percent growth.
+
+# 5) In macroeconomics:
+#    - CPI level is usually nonstationary
+#    - Inflation is more stable
+#    - Industrial production level is often nonstationary
+#    - Growth rates are more stable than levels
+
+# 6) Visual evidence is not a formal test.
+#    But it gives strong intuition before we move to:
+#    - ACF and PACF
+#    - Unit root tests
+#    - ARIMA modeling
+
+
+
+
+
+
+
+
 
 
