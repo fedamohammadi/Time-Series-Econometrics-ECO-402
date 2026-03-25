@@ -152,11 +152,11 @@ ts.plot(AP, AP.predict, lty = 1:2)
 
 # ---------------- Summary of commands used ------
 
-# nls ==> non-linear least squares fit
-# HoltWinters ==> estimates the parameters of the Holt-Winters or exponential smoothing model
-# predict ==> forecasts future values
-# ts.union ==> create the union of two series
-# coef ==> extracts the coefficients of a fitted model
+# nls --> non-linear least squares fit
+# HoltWinters --> estimates the parameters of the Holt-Winters or exponential smoothing model
+# predict --> forecasts future values
+# ts.union --> create the union of two series
+# coef --> extracts the coefficients of a fitted model
 
 
 
