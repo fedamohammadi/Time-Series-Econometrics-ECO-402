@@ -126,14 +126,37 @@ Comp.hw1 <- HoltWinters(Comp.ts, beta = FALSE, gamma = FALSE)
 # Now it will print and plot correctly
 Comp.hw1
 plot(Comp.hw1)
-# -----------------------correction ---------------------
 
 
+# ============== Sales of Australian wine ==================
+wine.dat <- read.table("Data/wine.dat", header=T)
+attach(wine.dat)
+
+sweetw.ts <- ts(sweetw, start = c(1980,1), freq = 12)
+plot(sweetw.ts, xlab= "Time (months)", ylab = "sales (1000 litres)")
+sweetw.hw <- HoltWinters (sweetw.ts, seasonal = "mult")
+sweetw.hw ; sweetw.hw$coef ; sweetw.hw$SSE
 
 
+sqrt(sweetw.hw$SSE/length(sweetw))
+sd(sweetw)
+plot (sweetw.hw$fitted)
+plot (sweetw.hw)
 
 
+AP.hw <- HoltWinters(AP, seasonal = "mult")
+plot(AP.hw)
+AP.predict <- predict(AP.hw, n.ahead = 4 * 12)
+ts.plot(AP, AP.predict, lty = 1:2)
 
+
+# ---------------- Summary of commands used ------
+
+# nls ==> non-linear least squares fit
+# HoltWinters ==> estimates the parameters of the Holt-Winters or exponential smoothing model
+# predict ==> forecasts future values
+# ts.union ==> create the union of two series
+# coef ==> extracts the coefficients of a fitted model
 
 
 
