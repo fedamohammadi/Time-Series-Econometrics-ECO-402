@@ -126,6 +126,73 @@ ggsave(
 
 
 
+# ==========================================================
+# 4) ACF and PACF for CPI level
+# ==========================================================
+
+# Build a clean monthly tsibble for CPI only
+macro_cpi <- macro %>%
+  as_tibble() %>%
+  transmute(
+    date = tsibble::yearmonth(date),
+    cpi = cpi
+  ) %>%
+  arrange(date) %>%
+  distinct(date, .keep_all = TRUE) %>%
+  as_tsibble(index = date) %>%
+  fill_gaps()
+
+# Check structure
+print(has_gaps(macro_cpi))
+print(count_gaps(macro_cpi))
+print(sum(is.na(macro_cpi$cpi)))
+
+p_cpi_level <- macro_cpi %>%
+  filter(!is.na(cpi)) %>%
+  ggplot(aes(x = date, y = cpi)) +
+  geom_line() +
+  labs(
+    title = "CPI Level",
+    x = "Date",
+    y = "CPI"
+  )
+
+print(p_cpi_level)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_cpi_level.png"),
+  plot = p_cpi_level,
+  width = 9,
+  height = 4.5
+)
+
+p_cpi_acf <- macro_cpi %>%
+  ACF(cpi, na.action = na.pass) %>%
+  autoplot() +
+  labs(title = "ACF of CPI Level")
+
+print(p_cpi_acf)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_cpi_level_acf.png"),
+  plot = p_cpi_acf,
+  width = 9,
+  height = 4.5
+)
+
+p_cpi_pacf <- macro_cpi %>%
+  PACF(cpi, na.action = na.pass) %>%
+  autoplot() +
+  labs(title = "PACF of CPI Level")
+
+print(p_cpi_pacf)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_cpi_level_pacf.png"),
+  plot = p_cpi_pacf,
+  width = 9,
+  height = 4.5
+)
 
 
 
