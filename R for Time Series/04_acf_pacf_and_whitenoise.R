@@ -1,5 +1,5 @@
 ############################################################
-#   - Understand white noise
+#   - What is white noise
 #   - Learn the meaning of ACF and PACF
 #   - Compute and visualize autocorrelation patterns
 #   - Compare stationary-looking series and nonstationary series
@@ -78,4 +78,63 @@ ggsave(
   width = 9,
   height = 4.5
 )
+
+
+# ==========================================================
+# 3) ACF and PACF of white noise
+# ==========================================================
+
+# For white noise:
+#   - ACF should be near 0 at all nonzero lags
+#   - PACF should also be near 0 at all nonzero lags
+
+wn_tsibble <- tibble(
+  date = yearmonth(seq.Date(from = as.Date("2000-01-01"),
+                            by = "month",
+                            length.out = 300)),
+  wn = white_noise_df$wn
+) %>%
+  as_tsibble(index = date)
+
+p_wn_acf <- wn_tsibble %>%
+  ACF(wn) %>%
+  autoplot() +
+  labs(title = "ACF of Simulated White Noise")
+
+print(p_wn_acf)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_white_noise_acf.png"),
+  plot = p_wn_acf,
+  width = 9,
+  height = 4.5
+)
+
+p_wn_pacf <- wn_tsibble %>%
+  PACF(wn) %>%
+  autoplot() +
+  labs(title = "PACF of Simulated White Noise")
+
+print(p_wn_pacf)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_white_noise_pacf.png"),
+  plot = p_wn_pacf,
+  width = 9,
+  height = 4.5
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
