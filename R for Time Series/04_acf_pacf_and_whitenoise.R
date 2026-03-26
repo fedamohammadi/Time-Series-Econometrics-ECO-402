@@ -195,13 +195,71 @@ ggsave(
 )
 
 
+# ==========================================================
+# 5) ACF and PACF for inflation
+# ==========================================================
 
+# Build a clean monthly tsibble for inflation
+macro_infl <- macro_acf %>%
+  as_tibble() %>%
+  transmute(
+    date = tsibble::yearmonth(date),
+    inflation_pct = inflation_pct
+  ) %>%
+  arrange(date) %>%
+  distinct(date, .keep_all = TRUE) %>%
+  as_tsibble(index = date) %>%
+  fill_gaps()
 
+# Quick checks
+print(has_gaps(macro_infl))
+print(count_gaps(macro_infl))
+print(sum(is.na(macro_infl$inflation_pct)))
 
+p_infl <- macro_infl %>%
+  ggplot(aes(x = date, y = inflation_pct)) +
+  geom_line() +
+  labs(
+    title = "Inflation: 100 × Δlog(CPI)",
+    x = "Date",
+    y = "Percent"
+  )
 
+print(p_infl)
 
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_inflation_series.png"),
+  plot = p_infl,
+  width = 9,
+  height = 4.5
+)
 
+p_infl_acf <- macro_infl %>%
+  ACF(inflation_pct, na.action = na.pass) %>%
+  autoplot() +
+  labs(title = "ACF of Inflation")
 
+print(p_infl_acf)
 
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_inflation_acf.png"),
+  plot = p_infl_acf,
+  width = 9,
+  height = 4.5
+)
+
+p_infl_pacf <- macro_infl %>%
+  PACF(inflation_pct, na.action = na.pass) %>%
+  autoplot() +
+  labs(title = "PACF of Inflation")
+
+print(p_infl_pacf)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_inflation_pacf.png"),
+  plot = p_infl_pacf,
+  width = 9,
+  height = 4.5
+)
 
 
