@@ -263,3 +263,75 @@ ggsave(
 )
 
 
+# ==========================================================
+# 6) ACF and PACF for industrial production growth
+# ==========================================================
+
+# Build a clean monthly tsibble for industrial production growth
+macro_indpro_growth <- macro_acf %>%
+  as_tibble() %>%
+  transmute(
+    date = tsibble::yearmonth(date),
+    indpro_growth_pct = indpro_growth_pct
+  ) %>%
+  arrange(date) %>%
+  distinct(date, .keep_all = TRUE) %>%
+  as_tsibble(index = date) %>%
+  fill_gaps()
+
+# Quick checks
+print(has_gaps(macro_indpro_growth))
+print(count_gaps(macro_indpro_growth))
+print(sum(is.na(macro_indpro_growth$indpro_growth_pct)))
+
+p_indpro_growth <- macro_indpro_growth %>%
+  ggplot(aes(x = date, y = indpro_growth_pct)) +
+  geom_line() +
+  labs(
+    title = "Industrial Production Growth: 100 × Δlog(INDPRO)",
+    x = "Date",
+    y = "Percent"
+  )
+
+print(p_indpro_growth)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_indpro_growth_series.png"),
+  plot = p_indpro_growth,
+  width = 9,
+  height = 4.5
+)
+
+p_indpro_acf <- macro_indpro_growth %>%
+  ACF(indpro_growth_pct, na.action = na.pass) %>%
+  autoplot() +
+  labs(title = "ACF of Industrial Production Growth")
+
+print(p_indpro_acf)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_indpro_growth_acf.png"),
+  plot = p_indpro_acf,
+  width = 9,
+  height = 4.5
+)
+
+p_indpro_pacf <- macro_indpro_growth %>%
+  PACF(indpro_growth_pct, na.action = na.pass) %>%
+  autoplot() +
+  labs(title = "PACF of Industrial Production Growth")
+
+print(p_indpro_pacf)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "04_indpro_growth_pacf.png"),
+  plot = p_indpro_pacf,
+  width = 9,
+  height = 4.5
+)
+
+
+
+
+
+
