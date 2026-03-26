@@ -1,4 +1,4 @@
-############################################################
+# ===========================================================
 #   - What is white noise
 #   - Learn the meaning of ACF and PACF
 #   - Compute and visualize autocorrelation patterns
@@ -7,7 +7,7 @@
 #
 # Data source:
 #   Uses macro_monthly.rds created in 00_setup_and_data.R
-############################################################
+# ===========================================================
 
 rm(list = ls())
 
@@ -329,6 +329,38 @@ ggsave(
   width = 9,
   height = 4.5
 )
+
+
+# ==========================================================
+# 7) A simple side-by-side comparison
+# ==========================================================
+
+# This table summarizes the rough ACF behavior we expect to see
+# in different kinds of time series.
+
+comparison_summary <- tibble(
+  series = c("White Noise", "CPI Level", "Inflation", "INDPRO Growth"),
+  expected_acf_pattern = c(
+    "Near zero at nonzero lags",
+    "Very persistent and slow decay",
+    "Moderate persistence and faster decay",
+    "Moderate persistence and faster decay"
+  ),
+  interpretation = c(
+    "No time dependence",
+    "Likely nonstationary",
+    "Closer to stationary",
+    "Closer to stationary"
+  )
+)
+
+print(comparison_summary)
+
+write_csv(
+  comparison_summary,
+  file.path(OUTPUT_DIR, "04_acf_pacf_comparison_summary.csv")
+)
+
 
 
 

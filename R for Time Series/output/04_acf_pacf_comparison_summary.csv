@@ -1,0 +1,5 @@
+series,expected_acf_pattern,interpretation
+White Noise,Near zero at nonzero lags,No time dependence
+CPI Level,Very persistent and slow decay,Likely nonstationary
+Inflation,Moderate persistence and faster decay,Closer to stationary
+INDPRO Growth,Moderate persistence and faster decay,Closer to stationary
