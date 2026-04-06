@@ -94,15 +94,12 @@ par(mfrow = c(1, 1))
 # 4.5 Autoregressive Models - fitting AR to the stationary series
 # ============================================================
 
-# First inspect ACF and PACF together
+# First we inspect ACF and PACF together
 par(mfrow = c(1, 2))
 acf(dsdUKgas, main = "ACF: Doubly-Differenced UKgas")
 pacf(dsdUKgas, main = "PACF: Doubly-Differenced UKgas")
 par(mfrow = c(1, 1))
 
-# The PACF helps distinguish AR structure:
-#   - Sharp cutoff in PACF after lag p => AR(p) behavior
-#   - Gradual decay in PACF => MA or ARMA component may be needed
 
 # ============================================================
 # 4.6 Fitted AR Models and AIC
@@ -114,13 +111,11 @@ UKgas.ar <- ar(dsdUKgas, method = "mle")
 # Inspect what R selected
 UKgas.ar$order     # chosen AR order
 UKgas.ar$ar        # estimated coefficients
-UKgas.ar$aic       # AIC values across all candidate orders tried
+UKgas.ar$aic       
 
 # Approximate 95% confidence interval for each coefficient
 UKgas.ar$ar + c(-2, 2) * sqrt(UKgas.ar$asy.var)
 
-# The AIC table: lower = better balance of fit and simplicity
-# The selected order is the one with the lowest AIC value
 
 # ============================================================
 # Residual diagnostics for the fitted AR model
