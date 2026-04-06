@@ -1,0 +1,2 @@
+data(UKgas)
+plot(UKgas)

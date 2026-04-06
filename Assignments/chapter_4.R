@@ -51,5 +51,3 @@ mean(DP) + c(-2, 2) * sd(DP)/sqrt(length(DP))
 
 
 
-
-
