@@ -144,3 +144,8 @@ pacf(resid(fit.arma11.u), main = "Residual PACF - UKgas")
 pred.u <- predict(fit.arma11.u, n.ahead = 12)
 pred.u$pred
 pred.u$se
+
+
+
+
+
