@@ -28,6 +28,18 @@ plot(UKgas,
      xlab = "Year",
      col  = "steelblue")
 
+
+# Saving the figure
+png("C:/Users/mohammadif/Downloads/raw_plot.png", width = 800, height = 500, res = 100)
+
+plot(UKgas,
+     main = "UK Quarterly Gas Consumption (1960-1986)",
+     ylab = "Gas Consumption (millions of therms)",
+     xlab = "Year",
+     col  = "steelblue")
+
+dev.off()
+
 # What we can see in this plot:
 # - Clear upward trend over time
 # - Strong seasonal pattern (spikes every winter, dips every summer)
@@ -62,6 +74,21 @@ boxplot(UKgas ~ cycle(UKgas),
 # - Q3 (Jul-Sep) is the lowest (no heating needed)
 # - The pattern is very regular and strong across all years
 
+# Saving the figures
+
+png("C:/Users/mohammadif/Downloads/decomp_plot.png", width = 800, height = 600, res = 100)
+plot(UKgas.decomp)
+dev.off()
+
+
+png("C:/Users/mohammadif/Downloads/seasonal_boxplot.png", width = 900, height = 500, res = 100)
+boxplot(UKgas ~ cycle(UKgas),
+        names = c("Q1", "Q2", "Q3", "Q4"),
+        main  = "Seasonal Boxplot of UKgas by Quarter",
+        ylab  = "Gas Consumption (millions of therms)",
+        xlab  = "Quarter",
+        col   = c("lightblue", "lightgreen", "lightyellow", "lightsalmon"))
+dev.off()
 
 # ============================================================
 # PART 3: AUTOCORRELATION ANALYSIS (ACF and PACF)
@@ -73,10 +100,23 @@ acf(UKgas,
     lag.max = 40,
     main    = "ACF of UKgas (Original Series)")
 
+# Save
+png("C:/Users/mohammadif/Downloads/acf_raw.png", width = 800, height = 500, res = 100)
+acf(UKgas, lag.max = 40, main = "ACF of UKgas (Original Series)")
+dev.off()
+
+
 # PACF of the original series
 pacf(UKgas,
      lag.max = 40,
      main    = "PACF of UKgas (Original Series)")
+
+
+# Save
+png("C:/Users/mohammadif/Downloads/pacf_raw.png", width = 800, height = 500, res = 100)
+pacf(UKgas, lag.max = 40, main = "PACF of UKgas (Original Series)")
+dev.off()
+
 
 # What we see here:
 # - ACF decays very slowly (strong persistence = non-stationary)
@@ -104,6 +144,17 @@ plot(UKgas.hw,
      main = "Holt-Winters Fit for UKgas (Multiplicative)",
      ylab = "Gas Consumption (millions of therms)")
 
+print(UKgas.hw)
+
+# Save it
+png("C:/Users/mohammadif/Downloads/hw_fit.png", width = 900, height = 500, res = 100)
+plot(UKgas.hw,
+     main = "Holt-Winters Fit for UKgas (Multiplicative)",
+     ylab = "Gas Consumption (millions of therms)")
+dev.off()
+
+
+
 # Generate forecasts 2 years (8 quarters) ahead
 UKgas.hw.forecast <- predict(UKgas.hw, n.ahead = 8)
 
@@ -118,6 +169,21 @@ legend("topleft",
        legend = c("Observed", "Forecast"),
        lty    = c(1, 2),
        col    = c("steelblue", "red"))
+
+# Save it
+png("C:/Users/mohammadif/Downloads/hw_forecast.png", width = 900, height = 500, res = 100)
+ts.plot(UKgas, UKgas.hw.forecast,
+        lty  = c(1, 2),
+        col  = c("steelblue", "red"),
+        main = "UKgas: Holt-Winters Forecasts (8 Quarters Ahead)",
+        ylab = "Gas Consumption (millions of therms)",
+        xlab = "Year")
+legend("topleft",
+       legend = c("Observed", "Forecast"),
+       lty    = c(1, 2),
+       col    = c("steelblue", "red"))
+dev.off()
+
 
 
 # ============================================================
@@ -135,6 +201,16 @@ plot(log.UKgas,
      ylab = "log(Gas Consumption)",
      xlab = "Year",
      col  = "darkgreen")
+
+# Save it
+png("C:/Users/mohammadif/Downloads/log_ukgas.png", width = 900, height = 500, res = 100)
+plot(log.UKgas,
+     main = "Log of UKgas",
+     ylab = "log(Gas Consumption)",
+     xlab = "Year",
+     col  = "darkgreen")
+dev.off()
+
 
 # Create time index and seasonal factor for regression
 Time <- time(UKgas)          # Numeric time variable (1960.00, 1960.25, ...)
@@ -157,6 +233,19 @@ plot(resid(UKgas.lm),
      col  = "purple")
 abline(h = 0, lty = 2, col = "red")
 
+
+# Save it
+png("C:/Users/mohammadif/Downloads/resid_plot.png", width = 900, height = 500, res = 100)
+plot(resid(UKgas.lm),
+     type = "l",
+     main = "Residuals from Log-Linear Regression with Seasonal Dummies",
+     ylab = "Residuals",
+     xlab = "Time Index",
+     col  = "purple")
+abline(h = 0, lty = 2, col = "red")
+dev.off()
+
+
 # ACF of regression residuals
 # If residuals are still autocorrelated, OLS assumptions are violated
 # and we need stochastic modeling (AR/MA/ARMA) on the residuals
@@ -164,6 +253,12 @@ acf(resid(UKgas.lm),
     lag.max = 40,
     main    = "ACF of Regression Residuals")
 
+#Save it
+png("C:/Users/mohammadif/Downloads/acf_resid_lm.png", width = 900, height = 500, res = 100)
+acf(resid(UKgas.lm),
+    lag.max = 40,
+    main    = "ACF of Regression Residuals")
+dev.off()
 
 # ============================================================
 # PART 6: TRANSFORM TOWARD STATIONARITY
@@ -183,6 +278,17 @@ plot(log.UKgas.sdiff,
      col  = "darkorange")
 abline(h = 0, lty = 2)
 
+#Save this
+png("C:/Users/mohammadif/Downloads/log_sdiff.png", width = 900, height = 500, res = 100)
+log.UKgas.sdiff <- diff(log.UKgas, lag = 4)
+plot(log.UKgas.sdiff,
+     main = "Seasonally Differenced log(UKgas) [lag 4]",
+     ylab = "Seasonal Difference of log(UKgas)",
+     xlab = "Year",
+     col  = "darkorange")
+abline(h = 0, lty = 2)
+dev.off()
+
 # Now, I check if trend still remains after seasonal differencing
 # If yes, I apply first differencing as well
 
@@ -195,6 +301,18 @@ plot(log.UKgas.diff2,
      xlab = "Year",
      col  = "darkred")
 abline(h = 0, lty = 2)
+
+# Save this
+png("C:/Users/mohammadif/Downloads/log_diff2.png", width = 900, height = 500, res = 100)
+log.UKgas.diff2 <- diff(log.UKgas.sdiff, lag = 1)
+plot(log.UKgas.diff2,
+     main = "Seasonally + First Differenced log(UKgas)",
+     ylab = "Differenced Series",
+     xlab = "Year",
+     col  = "darkred")
+abline(h = 0, lty = 2)
+dev.off()
+
 
 # ACF and PACF after transformation
 # We want the ACF to decay quickly and have no strong seasonal spikes
@@ -213,6 +331,32 @@ acf(log.UKgas.diff2,
 pacf(log.UKgas.diff2,
      lag.max = 40,
      main    = "PACF: Seasonally + First Differenced log(UKgas)")
+
+
+#Save them
+png("C:/Users/mohammadif/Downloads/acf_sdiff.png", width = 900, height = 500, res = 100)
+acf(log.UKgas.sdiff,
+    lag.max = 40,
+    main    = "ACF: Seasonally Differenced log(UKgas)")
+dev.off()
+
+png("C:/Users/mohammadif/Downloads/pacf_sdiff.png", width = 900, height = 500, res = 100)
+pacf(log.UKgas.sdiff,
+     lag.max = 40,
+     main    = "PACF: Seasonally Differenced log(UKgas)")
+dev.off()
+
+png("C:/Users/mohammadif/Downloads/acf_diff2.png", width = 900, height = 500, res = 100)
+acf(log.UKgas.diff2,
+    lag.max = 40,
+    main    = "ACF: Seasonally + First Differenced log(UKgas)")
+dev.off()
+
+png("C:/Users/mohammadif/Downloads/pacf_diff2.png", width = 900, height = 500, res = 100)
+pacf(log.UKgas.diff2,
+     lag.max = 40,
+     main    = "PACF: Seasonally + First Differenced log(UKgas)")
+dev.off()
 
 # We use the transformed series that looks most stationary for model fitting.
 # Let x.stat be our working stationary series.
@@ -273,6 +417,28 @@ pacf(resid(fit.ar1),
 preferred.model <- fit.ar1
 
 
+# Save them: 
+png("C:/Users/mohammadif/Downloads/acf_resid_ar1.png", width = 900, height = 500, res = 100)
+acf(resid(fit.ar1),
+    main = "ACF of AR(1) Residuals")
+dev.off()
+
+png("C:/Users/mohammadif/Downloads/acf_resid_ma1.png", width = 900, height = 500, res = 100)
+acf(resid(fit.ma1),
+    main = "ACF of MA(1) Residuals")
+dev.off()
+
+png("C:/Users/mohammadif/Downloads/acf_resid_arma11.png", width = 900, height = 500, res = 100)
+acf(resid(fit.arma11),
+    main = "ACF of ARMA(1,1) Residuals")
+dev.off()
+
+png("C:/Users/mohammadif/Downloads/pacf_resid_ar1.png", width = 900, height = 500, res = 100)
+pacf(resid(fit.ar1),
+     main = "PACF of AR(1) Residuals")
+dev.off()
+
+
 # ============================================================
 # PART 8: FORECAST USING PREFERRED STOCHASTIC MODEL
 # ============================================================
@@ -292,6 +458,7 @@ print(UKgas.forecast$pred)  # Forecasted values (on the stationary/transformed s
 print(UKgas.forecast$se)    # Standard errors of forecasts
 
 # Plot the stationary series with forecasts appended
+png("C:/Users/mohammadif/Downloads/ar1_forecast.png", width = 900, height = 500, res = 100)
 ts.plot(x.stat,
         UKgas.forecast$pred,
         lty  = c(1, 2),
@@ -302,7 +469,9 @@ ts.plot(x.stat,
 legend("topleft",
        legend = c("Observed (stationary)", "Forecast"),
        lty    = c(1, 2),
-       col    = c("steelblue", "red"))
+       col    = c("steelblue", "red"),
+       cex    = 0.7)
+dev.off()
 
 # NOTE: These forecasts are on the transformed (seasonally differenced log) scale.
 # A full back-transformation to the original scale would require
