@@ -487,3 +487,67 @@ ggsave(
 )
 
 
+# ==========================================================
+# 11) Higher-order models: AR(2) and MA(2)
+# ==========================================================
+
+# AR(2): y_t = phi_1 * y_{t-1} + phi_2 * y_{t-2} + epsilon_t
+#   ACF:  decays gradually (can show damped oscillations if roots are complex)
+#   PACF: cuts off after lag 2
+#
+# MA(2): y_t = epsilon_t + theta_1 * epsilon_{t-1} + theta_2 * epsilon_{t-2}
+#   ACF:  cuts off after lag 2
+#   PACF: decays gradually
+
+# AR(2) with complex roots (produces damped sine wave in ACF)
+ar2_sim <- arima.sim(model = list(ar = c(0.5, -0.3)), n = n)
+
+ts_ar2 <- make_tsibble(ar2_sim)
+
+p_ar2_acf <- ts_ar2 %>%
+  ACF(value, lag_max = 30) %>%
+  autoplot() +
+  labs(title = "ACF: AR(2) with phi1=0.5, phi2=-0.3")
+
+p_ar2_pacf <- ts_ar2 %>%
+  PACF(value, lag_max = 30) %>%
+  autoplot() +
+  labs(title = "PACF: AR(2) with phi1=0.5, phi2=-0.3")
+
+# MA(2)
+ma2_sim <- arima.sim(model = list(ma = c(0.6, 0.3)), n = n)
+
+ts_ma2 <- make_tsibble(ma2_sim)
+
+p_ma2_acf <- ts_ma2 %>%
+  ACF(value, lag_max = 30) %>%
+  autoplot() +
+  labs(title = "ACF: MA(2) with theta1=0.6, theta2=0.3")
+
+p_ma2_pacf <- ts_ma2 %>%
+  PACF(value, lag_max = 30) %>%
+  autoplot() +
+  labs(title = "PACF: MA(2) with theta1=0.6, theta2=0.3")
+
+p_higher_order <- (p_ar2_acf | p_ar2_pacf) /
+  (p_ma2_acf | p_ma2_pacf) +
+  plot_annotation(
+    title = "Higher-Order Models: AR(2) and MA(2)",
+    subtitle = "AR(2) PACF cuts off at lag 2 | MA(2) ACF cuts off at lag 2"
+  )
+
+print(p_higher_order)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "05_higher_order_acf_pacf.png"),
+  plot = p_higher_order,
+  width = 12,
+  height = 7
+)
+
+
+
+
+
+
+
