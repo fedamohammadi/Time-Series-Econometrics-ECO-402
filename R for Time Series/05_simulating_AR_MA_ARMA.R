@@ -546,6 +546,106 @@ ggsave(
 )
 
 
+# ==========================================================
+# 12) The identification table
+# ==========================================================
+
+# This is the table students need to memorize.
+# It tells you how to go from ACF/PACF patterns to model choice.
+#
+#   Model    |  ACF pattern              |  PACF pattern
+#   ---------+---------------------------+--------------------------
+#   AR(p)    |  Gradual decay            |  Cuts off after lag p
+#   MA(q)    |  Cuts off after lag q     |  Gradual decay
+#   ARMA(p,q)|  Gradual decay            |  Gradual decay
+#
+# "Gradual decay" means exponential decay, damped sine waves,
+# or alternating signs that shrink toward zero.
+#
+# "Cuts off" means the correlations drop to statistically zero
+# (inside the blue confidence bands) after a specific lag.
+#
+# In practice, real data is messy and patterns are never this clean.
+# But this table gives you a starting point for model selection.
+# Information criteria (AIC, BIC) and formal tests will refine it later.
+
+identification_table <- tibble(
+  model = c("AR(p)", "MA(q)", "ARMA(p,q)"),
+  acf_pattern = c(
+    "Gradual decay (exponential or damped oscillation)",
+    "Cuts off sharply after lag q",
+    "Gradual decay (no clean cutoff)"
+  ),
+  pacf_pattern = c(
+    "Cuts off sharply after lag p",
+    "Gradual decay (exponential or damped oscillation)",
+    "Gradual decay (no clean cutoff)"
+  )
+)
+
+print(identification_table)
+
+write_csv(
+  identification_table,
+  file.path(OUTPUT_DIR, "05_model_identification_table.csv")
+)
+
+
+# ==========================================================
+# 13) Side-by-side comparison: AR(1) vs MA(1) vs ARMA(1,1)
+# ==========================================================
+
+# One final visual to hammer the point home.
+# We pick one simulation from each class and compare their ACF/PACF.
+
+p_compare_ar1_acf <- ts_ar1_high %>%
+  ACF(value, lag_max = 20) %>%
+  autoplot() +
+  labs(title = "AR(1): ACF decays")
+
+p_compare_ar1_pacf <- ts_ar1_high %>%
+  PACF(value, lag_max = 20) %>%
+  autoplot() +
+  labs(title = "AR(1): PACF cuts off")
+
+p_compare_ma1_acf <- ts_ma1_high %>%
+  ACF(value, lag_max = 20) %>%
+  autoplot() +
+  labs(title = "MA(1): ACF cuts off")
+
+p_compare_ma1_pacf <- ts_ma1_high %>%
+  PACF(value, lag_max = 20) %>%
+  autoplot() +
+  labs(title = "MA(1): PACF decays")
+
+p_compare_arma_acf <- ts_arma_a %>%
+  ACF(value, lag_max = 20) %>%
+  autoplot() +
+  labs(title = "ARMA(1,1): ACF decays")
+
+p_compare_arma_pacf <- ts_arma_a %>%
+  PACF(value, lag_max = 20) %>%
+  autoplot() +
+  labs(title = "ARMA(1,1): PACF decays")
+
+p_final_comparison <- (p_compare_ar1_acf | p_compare_ar1_pacf) /
+  (p_compare_ma1_acf | p_compare_ma1_pacf) /
+  (p_compare_arma_acf | p_compare_arma_pacf) +
+  plot_annotation(
+    title = "The Identification Cheat Sheet",
+    subtitle = "AR: ACF decays, PACF cuts | MA: ACF cuts, PACF decays | ARMA: both decay"
+  )
+
+print(p_final_comparison)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "05_identification_cheatsheet.png"),
+  plot = p_final_comparison,
+  width = 12,
+  height = 10
+)
+
+
 
 
 
