@@ -1,0 +1,4 @@
+model,acf_pattern,pacf_pattern
+AR(p),Gradual decay (exponential or damped oscillation),Cuts off sharply after lag p
+MA(q),Cuts off sharply after lag q,Gradual decay (exponential or damped oscillation)
+"ARMA(p,q)",Gradual decay (no clean cutoff),Gradual decay (no clean cutoff)
