@@ -192,3 +192,96 @@ print(ic_table)
 write_csv(ic_table, file.path(OUTPUT_DIR, "06_ic_comparison_simulated.csv"))
 
 
+# ==========================================================
+# 7) The "I" in ARIMA: differencing nonstationary series
+# ==========================================================
+
+# ARIMA(p, d, q) means:
+#   - Difference the series d times to make it stationary
+#   - Then fit an ARMA(p, q) to the differenced series
+#
+# For example, if CPI is nonstationary (trending upward),
+# we cannot fit an ARMA directly to CPI levels.
+# But the first difference (or log-difference) might be stationary.
+#
+# ARIMA(1, 1, 0) on CPI is the same as AR(1) on delta(CPI).
+#
+# When d = 1 in arima(), the function differences internally
+# before estimating. You do not need to difference by hand.
+
+# Let's demonstrate with a simulated random walk
+rw <- cumsum(rnorm(n))
+
+# Trying to fit AR(1) to the random walk (bad idea)
+fit_rw_ar1 <- arima(rw, order = c(1, 0, 0))
+cat("\n--- AR(1) on Random Walk (wrong approach) ---\n")
+cat("Estimated phi:", round(coef(fit_rw_ar1)["ar1"], 4), "\n")
+# phi will be very close to 1.0, confirming nonstationarity.
+# The model is not wrong per se, but it tells you nothing useful.
+
+# Correct approach: ARIMA(0, 1, 0) = difference once, fit white noise
+fit_rw_arima <- arima(rw, order = c(0, 1, 0))
+cat("\n--- ARIMA(0,1,0) on Random Walk (correct approach) ---\n")
+print(fit_rw_arima)
+# After differencing, the residuals should look like white noise,
+# because that's exactly what a random walk's first difference is.
+
+
+# ==========================================================
+# 8) Loading real data
+# ==========================================================
+
+macro <- readRDS(file.path(DATA_DIR, "macro_monthly.rds"))
+
+# Build the transformed series (same as file 04)
+macro_full <- macro %>%
+  arrange(date) %>%
+  mutate(
+    log_cpi          = log(cpi),
+    inflation_pct    = 100 * (log(cpi) - lag(log(cpi))),
+    log_indpro       = log(indpro),
+    indpro_growth_pct = 100 * (log(indpro) - lag(log(indpro)))
+  ) %>%
+  drop_na(inflation_pct, indpro_growth_pct)
+
+# Convert to tsibble for fable
+macro_ts <- macro_full %>%
+  as_tibble() %>%
+  mutate(date = yearmonth(date)) %>%
+  distinct(date, .keep_all = TRUE) %>%
+  as_tsibble(index = date) %>%
+  fill_gaps()
+
+
+# ==========================================================
+# 9) ARIMA on CPI level (the nonstationary case)
+# ==========================================================
+
+# CPI is clearly nonstationary (upward trend, file 04 showed
+# persistent ACF). We need to difference it.
+#
+# Strategy:
+#   1. Fit ARIMA(p, 1, q) to CPI level (let d = 1 handle the trend)
+#   2. Compare to fitting ARMA(p, q) to inflation directly
+#   Both should give similar results because ARIMA(p,1,q) on CPI
+#   is algebraically equivalent to ARMA(p,q) on delta(log CPI)...
+#   approximately, since we're using levels here, not logs.
+
+# Build a CPI-only tsibble (no NAs)
+macro_cpi <- macro_ts %>%
+  select(date, cpi) %>%
+  filter(!is.na(cpi))
+
+# Let fable::ARIMA() choose the best model automatically
+fit_cpi_auto <- macro_cpi %>%
+  model(auto = ARIMA(cpi))
+
+cat("\n--- Automatic ARIMA on CPI Level ---\n")
+report(fit_cpi_auto)
+
+# The automatic selection will almost certainly pick d = 1 or d = 2
+# because CPI is nonstationary. This confirms what we saw in the ACF.
+
+
+
+
