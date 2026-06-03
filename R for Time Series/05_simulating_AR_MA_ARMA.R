@@ -361,3 +361,129 @@ ggsave(
 )
 
 
+# ==========================================================
+# 8) The ARMA(1,1) model
+# ==========================================================
+
+# The ARMA(1,1) process combines AR and MA:
+#   y_t = c + phi * y_{t-1} + epsilon_t + theta * epsilon_{t-1}
+#
+# The AR part creates persistence (memory through past values).
+# The MA part creates a short burst of extra correlation (memory through past shocks).
+#
+# Theoretical ACF/PACF signatures of ARMA(1,1):
+#   ACF:  decays gradually (no clean cutoff)
+#   PACF: decays gradually (no clean cutoff)
+#
+# This is why ARMA is harder to identify from ACF/PACF alone.
+# Neither one cuts off cleanly, so you can't just eyeball p and q
+# the way you can for pure AR or pure MA.
+
+
+# ==========================================================
+# 9) Simulating ARMA(1,1) processes
+# ==========================================================
+
+arma11_a <- arima.sim(model = list(ar = 0.7, ma = 0.4), n = n)
+arma11_b <- arima.sim(model = list(ar = 0.3, ma = 0.8), n = n)
+arma11_c <- arima.sim(model = list(ar = 0.8, ma = -0.5), n = n)
+
+arma_df <- tibble(
+  t = rep(1:n, 3),
+  value = c(as.numeric(arma11_a), as.numeric(arma11_b), as.numeric(arma11_c)),
+  params = rep(
+    c("phi=0.7, theta=0.4", "phi=0.3, theta=0.8", "phi=0.8, theta=-0.5"),
+    each = n
+  )
+)
+
+arma_df$params <- factor(arma_df$params, levels = c(
+  "phi=0.7, theta=0.4", "phi=0.3, theta=0.8", "phi=0.8, theta=-0.5"
+))
+
+p_arma_series <- arma_df %>%
+  ggplot(aes(x = t, y = value)) +
+  geom_line(linewidth = 0.3) +
+  facet_wrap(~ params, ncol = 1, scales = "free_y") +
+  labs(
+    title = "Simulated ARMA(1,1) Processes",
+    subtitle = "Combines persistence from AR with short memory from MA",
+    x = "Time",
+    y = "Value"
+  )
+
+print(p_arma_series)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "05_arma11_series_comparison.png"),
+  plot = p_arma_series,
+  width = 10,
+  height = 7
+)
+
+
+# ==========================================================
+# 10) ACF and PACF of ARMA(1,1) processes
+# ==========================================================
+
+# --- ARMA(1,1) with phi = 0.7, theta = 0.4 ---
+
+ts_arma_a <- make_tsibble(arma11_a)
+
+p_arma_a_acf <- ts_arma_a %>%
+  ACF(value, lag_max = 30) %>%
+  autoplot() +
+  labs(title = "ACF: ARMA(1,1) phi=0.7, theta=0.4")
+
+p_arma_a_pacf <- ts_arma_a %>%
+  PACF(value, lag_max = 30) %>%
+  autoplot() +
+  labs(title = "PACF: ARMA(1,1) phi=0.7, theta=0.4")
+
+# --- ARMA(1,1) with phi = 0.3, theta = 0.8 ---
+
+ts_arma_b <- make_tsibble(arma11_b)
+
+p_arma_b_acf <- ts_arma_b %>%
+  ACF(value, lag_max = 30) %>%
+  autoplot() +
+  labs(title = "ACF: ARMA(1,1) phi=0.3, theta=0.8")
+
+p_arma_b_pacf <- ts_arma_b %>%
+  PACF(value, lag_max = 30) %>%
+  autoplot() +
+  labs(title = "PACF: ARMA(1,1) phi=0.3, theta=0.8")
+
+# --- ARMA(1,1) with phi = 0.8, theta = -0.5 ---
+
+ts_arma_c <- make_tsibble(arma11_c)
+
+p_arma_c_acf <- ts_arma_c %>%
+  ACF(value, lag_max = 30) %>%
+  autoplot() +
+  labs(title = "ACF: ARMA(1,1) phi=0.8, theta=-0.5")
+
+p_arma_c_pacf <- ts_arma_c %>%
+  PACF(value, lag_max = 30) %>%
+  autoplot() +
+  labs(title = "PACF: ARMA(1,1) phi=0.8, theta=-0.5")
+
+# Combine all six plots
+p_arma_acf_pacf <- (p_arma_a_acf | p_arma_a_pacf) /
+  (p_arma_b_acf | p_arma_b_pacf) /
+  (p_arma_c_acf | p_arma_c_pacf) +
+  plot_annotation(
+    title = "ACF and PACF Signatures of ARMA(1,1) Processes",
+    subtitle = "Both ACF and PACF decay gradually (no clean cutoff in either)"
+  )
+
+print(p_arma_acf_pacf)
+
+ggsave(
+  filename = file.path(OUTPUT_DIR, "05_arma11_acf_pacf_comparison.png"),
+  plot = p_arma_acf_pacf,
+  width = 12,
+  height = 10
+)
+
+
